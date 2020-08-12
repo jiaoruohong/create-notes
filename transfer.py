@@ -129,7 +129,7 @@ class BlogGenerator:
         content += example + self.getNewLines()
         content += self.codeBlock + self.getNewLines(2)
 
-        content += "## " + "Codes" + self.getNewLines(2)
+        content += "## " + "Solution" + self.getNewLines(2)
         if(len(codeCpp) > 0):
             content += "> cpp" + self.getNewLines(2)
             content += self.codeBlock + self.getNewLines(1)
