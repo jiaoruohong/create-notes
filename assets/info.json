@@ -1,8 +1,10 @@
 {
     "institution" : "hdu",
     "id" : "1234",
-    "codeDir" : "./assets/",
-    "noteDir" : "./assets/",
-    "blogDir" : "./assets/"
+    "codeDir" : "./assets/example/",
+    "noteDir" : "./assets/example/",
+    "blogDir" : "./assets/example/",
+    "blogDescription" : "blogDescription",
+    "blogTags" : "blogTags"
 }
 
