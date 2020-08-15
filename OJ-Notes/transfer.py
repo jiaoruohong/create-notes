@@ -97,11 +97,11 @@ class BlogGenerator:
             problem = loadFile.read()
         with open("./example/example.md", 'r') as loadFile:
             example = loadFile.read()
-        with open("./codes/solution.md", 'r') as loadFile:
+        with open("./codes/Solution.md", 'r') as loadFile:
             solutionMd = loadFile.read()
-        with open("./codes/solution.cpp", 'r') as loadFile:
+        with open("./codes/Solution.cpp", 'r') as loadFile:
             codeCpp = loadFile.read()
-        with open("./codes/solution.java", 'r') as loadFile:
+        with open("./codes/Solution.java", 'r') as loadFile:
             codeJava = loadFile.read()
 
         return problem, example, solutionMd, codeCpp, codeJava
