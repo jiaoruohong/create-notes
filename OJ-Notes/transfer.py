@@ -93,16 +93,18 @@ class BlogGenerator:
 
     def getContent(self):
 
-        with open("./problem/problem.txt", 'r') as loadFile:
+        with open("./problem/problem.md", 'r') as loadFile:
             problem = loadFile.read()
-        with open("./example/example.txt", 'r') as loadFile:
+        with open("./example/example.md", 'r') as loadFile:
             example = loadFile.read()
+        with open("./codes/solution.md", 'r') as loadFile:
+            solutionMd = loadFile.read()
         with open("./codes/solution.cpp", 'r') as loadFile:
             codeCpp = loadFile.read()
         with open("./codes/solution.java", 'r') as loadFile:
             codeJava = loadFile.read()
 
-        return problem, example, codeCpp, codeJava
+        return problem, example, solutionMd, codeCpp, codeJava
 
     def getNewLines(self, n=1):
         ans = ""
@@ -118,43 +120,48 @@ class BlogGenerator:
 
         return ans
 
-    def getPaperContent(self, title, problem, example, codeCpp, codeJava):
+    def getPaperContent(self,
+                        title, problem, example, solution, codeCpp, codeJava):
         content = "# " + title + self.getNewLines(2)
 
         content += "## " + "Problem" + self.getNewLines(2)
-        content += problem + self.getNewLines(2)
+        content += problem + self.getNewLines()
 
         content += "## " + "Example" + self.getNewLines(2)
-        content += self.codeBlock + self.getNewLines()
+        content += self.codeBlock + "bash" + self.getNewLines()
         content += example + self.getNewLines()
         content += self.codeBlock + self.getNewLines(2)
 
         content += "## " + "Solution" + self.getNewLines(2)
+        if(len(solution) > 0):
+            content += "> Analysis" + self.getNewLines(2)
+            content += solution + self.getNewLines()
         if(len(codeCpp) > 0):
-            content += "> cpp" + self.getNewLines(2)
+            content += self.getNewLines()
+            content += "> Cpp" + self.getNewLines(2)
             content += self.codeBlock + self.getNewLines(1)
             content += codeCpp + self.getNewLines()
             content += self.codeBlock + self.getNewLines()
         if(len(codeJava) > 0):
             content += self.getNewLines()
-            content += "> java" + self.getNewLines(2)
+            content += "> Java" + self.getNewLines(2)
             content += self.codeBlock + self.getNewLines(1)
             content += codeJava + self.getNewLines()
             content += self.codeBlock + self.getNewLines()
 
         return content
 
-    def getNoteContent(self, problem, example, codeCpp, codeJava):
+    def getNoteContent(self, problem, example, solution, codeCpp, codeJava):
         head = ""
         content = self.getPaperContent(
                         self.noteTitle,
-                        problem, example, codeCpp, codeJava
+                        problem, example, solution, codeCpp, codeJava
                     )
         foot = ""
         noteContent = head + content + foot
         return noteContent
 
-    def getBlogContent(self, problem, example, codeCpp, codeJava):
+    def getBlogContent(self, problem, example, solution, codeCpp, codeJava):
         head = ""
         head += "---" + self.getNewLines()
         head += "layout: post" + self.getNewLines()
@@ -170,7 +177,7 @@ class BlogGenerator:
         head += "---" + self.getNewLines(2)
         content = self.getPaperContent(
                         self.blogTitle,
-                        problem, example, codeCpp, codeJava
+                        problem, example, solution, codeCpp, codeJava
                     )
         foot = ""
         blogContent = head + content + foot
@@ -185,9 +192,9 @@ if __name__ == "__main__":
         noteDst, blogDst = generator.getDst()
     print(codeDstCpp + ' ' + codeDstJava + ' ' + noteDst + ' ' + blogDst)
 
-    problem, example,\
+    problem, example, solutionMd,\
         codeCpp, codeJava = generator.getContent()
-    print(problem + example + codeCpp + codeJava)
+    print(problem + example + solutionMd + codeCpp + codeJava)
 
     with open(codeDstCpp, 'w') as fopt:
         fopt.write(codeCpp)
@@ -197,8 +204,10 @@ if __name__ == "__main__":
 
     with open(noteDst, 'w') as fopt:
         fopt.write(
-            generator.getNoteContent(problem, example, codeCpp, codeJava))
+            generator.getNoteContent(problem, example,
+                                     solutionMd, codeCpp, codeJava))
 
     with open(blogDst, 'w') as fopt:
         fopt.write(
-            generator.getBlogContent(problem, example, codeCpp, codeJava))
+            generator.getBlogContent(problem, example,
+                                     solutionMd, codeCpp, codeJava))
