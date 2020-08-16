@@ -1,10 +1,8 @@
 {
     "institution" : "hdu",
     "id" : "1234",
+    "weblink" : "https://www.weblink.com",
     "codeDir" : "./assets/example/",
-    "noteDir" : "./assets/example/",
-    "blogDir" : "./assets/example/",
-    "blogDescription" : "blogDescription",
-    "blogTags" : "blogTags"
+    "noteDir" : "./assets/example/"
 }
 

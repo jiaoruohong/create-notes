@@ -1,45 +1,31 @@
 import sys
 import json
 from pathlib import Path
-import time
 
 
-class BlogGenerator:
+class NoteGenerator:
 
-    codeBlockNote = "```"
-    codeBlockBlog = "~~~"
     newline = "\n"
 
     institution = ""
     id = ""
+    weblink = ""
 
     codeDir = ""
     noteDir = ""
-    blogDir = ""
-
-    blogDescription = ""
-    blogTags = ""
 
     codeFileName = ""
-    noteFileName = ""
-    blogFileName = ""
+    noteFileNameDes = ""
+    noteFileNameSol = ""
 
-    codeTitle = ""
-    noteTitle = ""
-    blogTitle = ""
-
-    def getCodeTitle(self):
-        self.codeTitle = self.id
+    def getCodeFileName(self):
         self.codeFileName = self.id
 
-    def getNoteTitle(self):
-        self.noteTitle = self.id
-        self.noteFileName = self.id
-
-    def getBlogTitle(self):
-        self.blogTitle = self.institution + ' ' + self.id
-        self.blogFileName = time.strftime("%Y-%m-%d-", time.localtime())\
-            + self.institution + '-' + self.id
+    def getNoteFileName(self):
+        self.noteFileNameDes =\
+            self.institution.capitalize() + "-" + self.id + "-" + "des"
+        self.noteFileNameSol =\
+            self.institution.capitalize() + "-" + self.id + "-" + "sol"
 
     def checkDirExist(self):
         if(not Path(self.codeDir).is_dir()):
@@ -48,10 +34,6 @@ class BlogGenerator:
             return False
         if(not Path(self.noteDir).is_dir()):
             print(self.noteDir + self.getSpace() + "is not exist"
-                  + self.getNewLines())
-            return False
-        if(not Path(self.blogDir).is_dir()):
-            print(self.blogDir + self.getSpace() + "is not exist"
                   + self.getNewLines())
             return False
 
@@ -67,38 +49,34 @@ class BlogGenerator:
 
         self.codeDir = data["codeDir"]
         self.noteDir = data["noteDir"]
-        self.blogDir = data["blogDir"]
+        self.weblink = data["weblink"]
 
         if(not self.checkDirExist()):
             sys.exit(0)
 
-        self.blogDescription = data["blogDescription"]
-        self.blogTags = data["blogTags"]
-
         return data["institution"], data["id"], data["codeDir"],\
-            data["noteDir"], data["blogDir"]
+            data["noteDir"]
 
     def getDst(self):
-        institution, id, codeDir, noteDir, blogDir = self.getJsonItem()
+        institution, id, codeDir, noteDir = self.getJsonItem()
 
-        self.getCodeTitle()
-        self.getNoteTitle()
-        self.getBlogTitle()
+        self.getCodeFileName()
+        self.getNoteFileName()
 
         codeDstCpp = codeDir + self.codeFileName + ".cpp"
         codeDstJava = codeDir + self.codeFileName + ".java"
-        noteDst = noteDir + self.noteFileName + ".md"
-        blogDst = blogDir + self.blogFileName + ".md"
+        noteDstDes = noteDir + self.noteFileNameDes + ".tex"
+        noteDstSol = noteDir + self.noteFileNameSol + ".tex"
 
-        return codeDstCpp, codeDstJava, noteDst, blogDst
+        return codeDstCpp, codeDstJava, noteDstDes, noteDstSol
 
     def getContent(self):
 
-        with open("./problem/problem.md", 'r') as loadFile:
+        with open("./problem/problem.tex", 'r') as loadFile:
             problem = loadFile.read()
-        with open("./example/example.md", 'r') as loadFile:
+        with open("./example/example.tex", 'r') as loadFile:
             example = loadFile.read()
-        with open("./codes/Solution.md", 'r') as loadFile:
+        with open("./codes/Solution.tex", 'r') as loadFile:
             solutionMd = loadFile.read()
         with open("./codes/Solution.cpp", 'r') as loadFile:
             codeCpp = loadFile.read()
@@ -121,99 +99,87 @@ class BlogGenerator:
 
         return ans
 
-    def getCodeBlock(self, askNote=True):
-        if(askNote):
-            return self.codeBlockNote
-        else:
-            return self.codeBlockBlog
+    def getListing(self, file_t, path2file):
+        ans = ""
+        ans += "\\lstinputlisting[language=" + file_t + "]{"
+        ans += path2file + "}"
 
-    def latexFormat(self, content, askNote=True):
-        if(askNote):
-            return content
-        else:
-            return content.replace(" $ ", " $$ ")
+        return ans
 
-    def getPaperContent(self,
-                        askNote, title,
-                        problem, example, solution,
-                        codeCpp, codeJava):
+    def getLabel(self, problemlist=True):
+        ans = ""
+        if(problemlist):
+            ans += "\\label{app:problemslist"
+            ans += ":" + self.institution + ":" + self.id
+            ans += "}"
+        else:
+            ans += "\\label{app:codeslist"
+            ans += ":" + self.institution + ":" + self.id
+            ans += "}"
+
+        return ans
+
+    def genLatex(self, prefix, content):
+        return "\\" + prefix + "{" + content + "}"
+
+    def getNoteDesContent(self, problem, example, solution):
         content = ""
 
-        if(askNote):
-            content += "# " + title + self.getNewLines(2)
+        content += self.genLatex("subsection", self.genLatex("href", self.weblink+"}{"+self.institution.capitalize()+self.getSpace()+self.id))
 
-        content += "## " + "Problem" + self.getNewLines(2)
-        content += self.latexFormat(problem, askNote) + self.getNewLines()
+        content += self.genLatex("label", "app:problemlist:"+self.institution+":"+self.id)
+        content += self.getNewLines(2)
 
-        content += "## " + "Example" + self.getNewLines(2)
-        content += self.getCodeBlock(askNote) + "bash" + self.getNewLines()
-        content += example + self.getNewLines()
-        content += self.getCodeBlock(askNote) + self.getNewLines(2)
+        content += "Description of problem.\\par" + self.getNewLines(2)
+        content += problem
+        content += self.getNewLines(2)
 
-        content += "## " + "Solution" + self.getNewLines(2)
-        if(len(solution) > 0):
-            content += "> Analysis" + self.getNewLines(2)
-            content += self.latexFormat(solution, askNote) + self.getNewLines()
-        if(len(codeCpp) > 0):
-            content += self.getNewLines()
-            content += "> Cpp" + self.getNewLines(2)
-            content += self.getCodeBlock(askNote) + "cpp" + self.getNewLines(1)
-            content += codeCpp + self.getNewLines()
-            content += self.getCodeBlock(askNote) + self.getNewLines()
-        if(len(codeJava) > 0):
-            content += self.getNewLines()
-            content += "> Java" + self.getNewLines(2)
-            content += self.getCodeBlock(askNote) +\
-                "java" + self.getNewLines(1)
-            content += codeJava + self.getNewLines()
-            content += self.getCodeBlock(askNote) + self.getNewLines()
+        content += "Example:\\par" + self.getNewLines(2)
+        content += example
+        content += self.getNewLines(2)
+
+        content += "Solution (Codes at~"
+        content += self.genLatex("ref", "app:codelist:"+self.institution+":"+self.id)
+        content += "):"
+        content += "\\par" + self.getNewLines(2)
+        content += solution
+        content += self.getNewLines(2)
 
         return content
 
-    def getNoteContent(self,
-                       problem, example, solution,
-                       codeCpp, codeJava):
-        head = ""
-        content = self.getPaperContent(
-                        True, self.noteTitle,
-                        problem, example, solution,
-                        codeCpp, codeJava
-                    )
-        foot = ""
-        noteContent = head + content + foot
-        return noteContent
+    def getNoteSolContent(self, codeCpp, codeJava):
+        content = ""
+        content += self.genLatex("subsection", self.genLatex("href", self.weblink+"}{"+self.institution.capitalize()+self.getSpace()+self.id))
 
-    def getBlogContent(self, problem, example, solution, codeCpp, codeJava):
-        head = ""
-        head += "---" + self.getNewLines()
-        head += "layout: post" + self.getNewLines()
-        head += "title: " + self.blogTitle + self.getNewLines()
-        head += "description: >" + self.getNewLines()\
-                + self.getSpace(2)\
-                + self.blogDescription\
-                + self.getNewLines()
-        head += "tags: ["\
-                + self.blogTags\
-                + "]"\
-                + self.getNewLines()
-        head += "---" + self.getNewLines(2)
-        content = self.getPaperContent(
-                        False, self.blogTitle,
-                        problem, example, solution,
-                        codeCpp, codeJava
-                    )
-        foot = ""
-        blogContent = head + content + foot
-        return blogContent
+        content += self.genLatex("label", "app:codelist:"+self.institution+":"+self.id)
+        content += self.getNewLines()
+
+        if(len(codeCpp) > 0):
+            content += self.getNewLines()
+            content += "Cpp:\\par" + self.getNewLines()
+
+            content += "\\lstinputlisting[language=Cpp]"
+            content += "{path2codeCpp}"
+            content += self.getNewLines()
+
+        if(len(codeJava) > 0):
+            content += self.getNewLines()
+            content += "Java:\\par" + self.getNewLines()
+
+            content += "\\lstinputlisting[language=Java]"
+            content += "{path2codeJava}"
+            content += self.getNewLines()
+
+        return content
 
 
 if __name__ == "__main__":
 
-    generator = BlogGenerator()
+    generator = NoteGenerator()
 
     codeDstCpp, codeDstJava,\
-        noteDst, blogDst = generator.getDst()
-    # print(codeDstCpp + ' ' + codeDstJava + ' ' + noteDst + ' ' + blogDst)
+        noteDstDes, noteDstSol = generator.getDst()
+    # print(codeDstCpp + ' ' + codeDstJava + ' ' + noteDst)
 
     problem, example, solutionMd,\
         codeCpp, codeJava = generator.getContent()
@@ -225,12 +191,9 @@ if __name__ == "__main__":
     with open(codeDstJava, 'w') as fopt:
         fopt.write(codeJava)
 
-    with open(noteDst, 'w') as fopt:
+    with open(noteDstDes, 'w') as fopt:
         fopt.write(
-            generator.getNoteContent(problem, example,
-                                     solutionMd, codeCpp, codeJava))
-
-    with open(blogDst, 'w') as fopt:
+            generator.getNoteDesContent(problem, example, solutionMd))
+    with open(noteDstSol, 'w') as fopt:
         fopt.write(
-            generator.getBlogContent(problem, example,
-                                     solutionMd, codeCpp, codeJava))
+            generator.getNoteSolContent(codeCpp, codeJava))
