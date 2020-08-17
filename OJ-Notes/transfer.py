@@ -162,8 +162,8 @@ class NoteGenerator:
             content += self.genLatex("textbf", "Cpp:")
             content += "\\par" + self.getNewLines()
 
-            content += "\\lstinputlisting[language=Cpp]"
-            content += "{" + "path2codeCpp" + "}"
+            content += "\\lstinputlisting[language=C++]"
+            content += "{" + "../codes/" + self.id + ".cpp}"
             content += self.getNewLines()
 
         if(len(codeJava) > 0):
@@ -172,7 +172,7 @@ class NoteGenerator:
             content += "\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Java]"
-            content += "{" + "path2codeJava}" + ""
+            content += "{" + "../codes/" + self.id + ".java}"
             content += self.getNewLines()
 
         content += self.getNewLines()

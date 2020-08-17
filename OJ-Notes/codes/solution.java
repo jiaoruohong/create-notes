@@ -16,7 +16,7 @@ class Solution {
 
     sol.input();
     sol.solve();
-    sol.output();
+    sol.otput();
   }
 
   public void input() {
