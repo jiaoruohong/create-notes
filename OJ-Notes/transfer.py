@@ -130,11 +130,11 @@ class NoteGenerator:
         content += self.genLatex("label", "app:problemlist:"+self.institution+":"+self.id)
         content += self.getNewLines(2)
 
-        content += "Description of problem.\\par" + self.getNewLines(2)
+        content += "Problem Description:\\par" + self.getNewLines(2)
         content += problem
         content += self.getNewLines(2)
 
-        content += "Example:\\par" + self.getNewLines(2)
+        content += "Sample:\\par" + self.getNewLines(2)
         content += example
         content += self.getNewLines(2)
 
@@ -159,7 +159,7 @@ class NoteGenerator:
             content += "Cpp:\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Cpp]"
-            content += "{path2codeCpp}"
+            content += "{" + "path2codeCpp" + "}"
             content += self.getNewLines()
 
         if(len(codeJava) > 0):
@@ -167,8 +167,10 @@ class NoteGenerator:
             content += "Java:\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Java]"
-            content += "{path2codeJava}"
+            content += "{" + "path2codeJava}" + ""
             content += self.getNewLines()
+
+        content += self.getNewLines()
 
         return content
 
