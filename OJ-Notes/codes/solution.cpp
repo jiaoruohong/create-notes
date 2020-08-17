@@ -26,8 +26,6 @@ int main() {
   Solution sol;
 
   sol.input();
-  sol.solve();
-  sol.otput();
 
   return 0;
 }
