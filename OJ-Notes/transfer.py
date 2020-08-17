@@ -159,7 +159,7 @@ class NoteGenerator:
 
         if(len(codeCpp) > 0):
             content += self.getNewLines()
-            content += self.genLatex("textbf", "C++:")
+            content += self.genLatex("textbf", "C++")
             content += "\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=C++]"
@@ -168,7 +168,7 @@ class NoteGenerator:
 
         if(len(codeJava) > 0):
             content += self.getNewLines()
-            content += self.genLatex("textbf", "Java:")
+            content += self.genLatex("textbf", "Java")
             content += "\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Java]"
