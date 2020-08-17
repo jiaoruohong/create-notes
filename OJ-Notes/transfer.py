@@ -130,15 +130,18 @@ class NoteGenerator:
         content += self.genLatex("label", "app:problemlist:"+self.institution+":"+self.id)
         content += self.getNewLines(2)
 
-        content += "Problem Description:\\par" + self.getNewLines(2)
+        content += self.genLatex("textbf", "Problem Description:")
+        content += "\\par" + self.getNewLines(2)
         content += problem
         content += self.getNewLines(2)
 
-        content += "Sample:\\par" + self.getNewLines(2)
+        content += self.genLatex("textbf", "Sample:")
+        content += "\\par" + self.getNewLines(2)
         content += example
         content += self.getNewLines(2)
 
-        content += "Solution (Codes at~"
+        content += self.genLatex("textbf", "Solution ")
+        content += "(Codes at~"
         content += self.genLatex("ref", "app:codelist:"+self.institution+":"+self.id)
         content += "):"
         content += "\\par" + self.getNewLines(2)
@@ -156,7 +159,8 @@ class NoteGenerator:
 
         if(len(codeCpp) > 0):
             content += self.getNewLines()
-            content += "Cpp:\\par" + self.getNewLines()
+            content += self.genLatex("textbf", "Cpp:")
+            content += "\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Cpp]"
             content += "{" + "path2codeCpp" + "}"
@@ -164,7 +168,8 @@ class NoteGenerator:
 
         if(len(codeJava) > 0):
             content += self.getNewLines()
-            content += "Java:\\par" + self.getNewLines()
+            content += self.genLatex("textbf", "Java:")
+            content += "\\par" + self.getNewLines()
 
             content += "\\lstinputlisting[language=Java]"
             content += "{" + "path2codeJava}" + ""
