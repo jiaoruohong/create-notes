@@ -1,6 +1,5 @@
 import sys
 import json
-from pathlib import Path
 
 
 class NoteGenerator:
@@ -11,196 +10,78 @@ class NoteGenerator:
     id = ""
     weblink = ""
 
-    codeDir = ""
-    noteDir = ""
+    path2problem = "",
+    problemDir = "",
 
-    codeFileName = ""
-    noteFileNameDes = ""
-    noteFileNameSol = ""
+    path2sampleipt = "",
+    sampleIptDir = "",
 
-    def getCodeFileName(self):
-        self.codeFileName = self.id
+    path2sampleopt = "",
+    sampleOptDir = "",
 
-    def getNoteFileName(self):
-        self.noteFileNameDes =\
-            self.institution.capitalize() + "-" + self.id + "-" + "des"
-        self.noteFileNameSol =\
-            self.institution.capitalize() + "-" + self.id + "-" + "sol"
+    path2solution = "",
+    solutionDir = "",
 
-    def checkDirExist(self):
-        if(not Path(self.codeDir).is_dir()):
-            print(self.codeDir + self.getSpace() + "is not exist"
-                  + self.getNewLines())
-            return False
-        if(not Path(self.noteDir).is_dir()):
-            print(self.noteDir + self.getSpace() + "is not exist"
-                  + self.getNewLines())
-            return False
+    path2cpp = "",
+    path2java = "",
+    codesDir = ""
 
-        return True
-
-    def getJsonItem(self):
+    def getBasicInfo(self):
 
         with open("./assets/info.json", 'r') as loadFile:
             data = json.load(loadFile)
 
         self.institution = data["institution"]
         self.id = data["id"]
-
-        self.codeDir = data["codeDir"]
-        self.noteDir = data["noteDir"]
         self.weblink = data["weblink"]
 
-        if(not self.checkDirExist()):
-            sys.exit(0)
+        self.path2problem = data["path2problem"]
+        self.problemDir = data["problemDir"]
 
-        return data["institution"], data["id"], data["codeDir"],\
-            data["noteDir"]
+        self.path2sampleipt = data["path2sampleipt"]
+        self.sampleIptDir = data["sampleIptDir"]
 
-    def getDst(self):
-        institution, id, codeDir, noteDir = self.getJsonItem()
+        self.path2sampleopt = data["path2sampleopt"]
+        
+        self.sampleOptDir = data["sampleOptDir"]
 
-        self.getCodeFileName()
-        self.getNoteFileName()
+        self.path2solution = data["path2solution"]
+        self.solutionDir = data["solutionDir"]
 
-        codeDstCpp = codeDir + self.codeFileName + ".cpp"
-        codeDstJava = codeDir + self.codeFileName + ".java"
-        noteDstDes = noteDir + self.noteFileNameDes + ".tex"
-        noteDstSol = noteDir + self.noteFileNameSol + ".tex"
+        self.path2cpp = data["path2cpp"]
+        self.path2java = data["path2java"]
+        self.codesDir = data["codesDir"]
 
-        return codeDstCpp, codeDstJava, noteDstDes, noteDstSol
-
-    def getContent(self):
-
-        with open("./problem/problem.tex", 'r') as loadFile:
-            problem = loadFile.read()
-        with open("./example/example.tex", 'r') as loadFile:
-            example = loadFile.read()
-        with open("./codes/Solution.tex", 'r') as loadFile:
-            solutionMd = loadFile.read()
-        with open("./codes/Solution.cpp", 'r') as loadFile:
-            codeCpp = loadFile.read()
-        with open("./codes/Solution.java", 'r') as loadFile:
-            codeJava = loadFile.read()
-
-        return problem, example, solutionMd, codeCpp, codeJava
-
-    def getNewLines(self, n=1):
-        ans = ""
-        for idx in range(n):
-            ans += "\n"
-
-        return ans
-
-    def getSpace(self, n=1):
-        ans = ""
-        for idx in range(n):
-            ans += " "
-
-        return ans
-
-    def getListing(self, file_t, path2file):
-        ans = ""
-        ans += "\\lstinputlisting[language=" + file_t + "]{"
-        ans += path2file + "}"
-
-        return ans
-
-    def getLabel(self, problemlist=True):
-        ans = ""
-        if(problemlist):
-            ans += "\\label{app:problemslist"
-            ans += ":" + self.institution + ":" + self.id
-            ans += "}"
-        else:
-            ans += "\\label{app:codeslist"
-            ans += ":" + self.institution + ":" + self.id
-            ans += "}"
-
-        return ans
-
-    def genLatex(self, prefix, content):
-        return "\\" + prefix + "{" + content + "}"
-
-    def getNoteDesContent(self, problem, example, solution):
-        content = ""
-
-        content += self.genLatex("subsection", self.genLatex("href", self.weblink+"}{"+self.institution.capitalize()+self.getSpace()+self.id))
-
-        content += self.genLatex("label", "app:problemlist:"+self.institution+":"+self.id)
-        content += self.getNewLines(2)
-
-        content += self.genLatex("textbf", "Problem Description:")
-        content += "\\par" + self.getNewLines(2)
-        content += problem
-        content += self.getNewLines(2)
-
-        content += self.genLatex("textbf", "Sample:")
-        content += "\\par" + self.getNewLines(2)
-        content += example
-        content += self.getNewLines(2)
-
-        content += self.genLatex("textbf", "Solution ")
-        content += "(Codes at~"
-        content += self.genLatex("ref", "app:codelist:"+self.institution+":"+self.id)
-        content += "):"
-        content += "\\par" + self.getNewLines(2)
-        content += solution
-        content += self.getNewLines(2)
+    def getFile(self, path2file):
+        with open(path2file, 'r') as loadFile:
+            content = loadFile.read()
 
         return content
 
-    def getNoteSolContent(self, codeCpp, codeJava):
-        content = ""
-        content += self.genLatex("subsection", self.genLatex("href", self.weblink+"}{"+self.institution.capitalize()+self.getSpace()+self.id))
+    def cinFile(self, path2file, data):
+        with open(path2file, 'w') as fopt:
+            fopt.write(data)
 
-        content += self.genLatex("label", "app:codelist:"+self.institution+":"+self.id)
-        content += self.getNewLines()
+    def copy2dir(self):
+        problem = self.getFile(self.path2problem)
+        sampleIpt = self.getFile(self.path2sampleipt)
+        sampleOpt = self.getFile(self.path2sampleopt)
+        solution = self.getFile(self.path2solution)
+        codeCpp = self.getFile(self.path2cpp)
+        codeJava = self.getFile(self.path2java)
 
-        if(len(codeCpp) > 0):
-            content += self.getNewLines()
-            content += self.genLatex("textbf", "C++")
-            content += "\\par" + self.getNewLines()
-
-            content += "\\lstinputlisting[language=C++]"
-            content += "{" + "../codes/" + self.id + ".cpp}"
-            content += self.getNewLines()
-
-        if(len(codeJava) > 0):
-            content += self.getNewLines()
-            content += self.genLatex("textbf", "Java")
-            content += "\\par" + self.getNewLines()
-
-            content += "\\lstinputlisting[language=Java]"
-            content += "{" + "../codes/" + self.id + ".java}"
-            content += self.getNewLines()
-
-        content += self.getNewLines()
-
-        return content
+        self.cinFile(self.problemDir + self.id + ".tex", problem)
+        self.cinFile(self.sampleIptDir + self.id + ".tex", sampleIpt)
+        self.cinFile(self.sampleOptDir + self.id + ".tex", sampleOpt)
+        self.cinFile(self.solutionDir + self.id + ".tex", solution)
+        self.cinFile(self.codesDir + self.id + ".cpp", codeCpp)
+        self.cinFile(self.codesDir + self.id + ".java", codeJava)
 
 
 if __name__ == "__main__":
 
-    generator = NoteGenerator()
+    handler = NoteGenerator()
 
-    codeDstCpp, codeDstJava,\
-        noteDstDes, noteDstSol = generator.getDst()
-    # print(codeDstCpp + ' ' + codeDstJava + ' ' + noteDst)
+    handler.getBasicInfo()
+    handler.copy2dir()
 
-    problem, example, solutionMd,\
-        codeCpp, codeJava = generator.getContent()
-    # print(problem + example + solutionMd + codeCpp + codeJava)
-
-    with open(codeDstCpp, 'w') as fopt:
-        fopt.write(codeCpp)
-
-    with open(codeDstJava, 'w') as fopt:
-        fopt.write(codeJava)
-
-    with open(noteDstDes, 'w') as fopt:
-        fopt.write(
-            generator.getNoteDesContent(problem, example, solutionMd))
-    with open(noteDstSol, 'w') as fopt:
-        fopt.write(
-            generator.getNoteSolContent(codeCpp, codeJava))

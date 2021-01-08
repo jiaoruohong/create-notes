@@ -15,8 +15,6 @@ class Solution {
     Solution sol = new Solution();
 
     sol.input();
-    sol.solve();
-    sol.output();
   }
 
   public void input() {

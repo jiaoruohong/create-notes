@@ -2,7 +2,21 @@
     "institution" : "hdu",
     "id" : "1234",
     "weblink" : "https://www.weblink.com",
-    "codeDir" : "./assets/example/",
-    "noteDir" : "./assets/example/"
+
+    "path2problem" : "./problem/problem.tex",
+    "problemDir" : "./assets/desDir/problem/",
+
+    "path2sampleipt" : "./sampleIpt/sampleIpt.tex",
+    "sampleIptDir" : "./assets/desDir/sampleIpt/",
+
+    "path2sampleopt" : "./sampleOpt/sampleOpt.tex",
+    "sampleOptDir" : "./assets/desDir/sampleOpt/",
+
+    "path2solution" : "./solution/solution.tex",
+    "solutionDir" : "./assets/desDir/solution/",
+
+    "path2cpp" : "./codes/Solution.cpp",
+    "path2java" : "./codes/Solution.java",
+    "codesDir" : "./assets/desDir/codes/"
 }
 
